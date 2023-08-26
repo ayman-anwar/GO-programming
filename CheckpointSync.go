@@ -1,51 +1,40 @@
 package main
-
-import (
-	"fmt"
-	"sync"
-	"time"
+import(
+    "fmt"
+    "sync"
+    "time"
 )
 
-func worker(id int, checkpoint chan bool, resume chan bool, wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	fmt.Printf("Worker %d: Starting\n", id)
-	time.Sleep(time.Duration(id) * time.Second) // Simulate some work
-
-	fmt.Printf("Worker %d: Checkpoint reached\n", id)
-	checkpoint <- true // Signal that checkpoint has been reached
-
-	<-resume // Wait for the resume signal
-
-	fmt.Printf("Worker %d: Resuming\n", id)
-	// Continue with the remaining work
-}
-
-func main() {
-	numWorkers := 5
-	checkpoint := make(chan bool)
-	resume := make(chan bool)
-	var wg sync.WaitGroup
-
-	// Launch the worker goroutines
-	for i := 1; i <= numWorkers; i++ {
-		wg.Add(1)
-		go worker(i, checkpoint, resume, &wg)
-	}
-
-	// Wait for all workers to reach the checkpoint
-	for i := 1; i <= numWorkers; i++ {
-		<-checkpoint
-	}
-
-	fmt.Println("All workers reached the checkpoint")
-	fmt.Println("Resuming all workers")
-
-	// Signal all workers to resume
-	for i := 1; i <= numWorkers; i++ {
-		resume <- true
-	}
-
-	wg.Wait()
-	fmt.Println("All workers completed their work")
+func main(){
+    var num int
+    var wg sync.WaitGroup
+    start:=make(chan struct{})
+    done:=make(chan struct{})
+    fmt.Print("Enter no. of workers:")
+    fmt.Scan(&num)
+    
+    for i:=1;i<=num;i++{
+        wg.Add(1)
+        go func(id int){
+            defer wg.Done()
+            
+            <-start
+            fmt.Printf("Worker %d is starting to work\n",id)
+            time.Sleep(time.Second)
+            
+            fmt.Printf("Worker %d has reached checkpoint\n",id)
+            time.Sleep(time.Second)
+            
+            fmt.Printf("Worker %d has completed the work\n",id)
+            time.Sleep(time.Second)
+            
+            
+        }(i)
+    }
+    fmt.Println("Starting workers.....")
+    close(start)
+    wg.Wait()
+    
+    close(done)
+    fmt.Println("All workers completed their work")
 }
