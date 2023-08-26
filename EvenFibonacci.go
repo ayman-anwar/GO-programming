@@ -8,8 +8,8 @@ func main(){
     fmt.Scan(&num)
     copy:=0
     for i:=0;i<num;i++{
-        if (copy%2==0){
-            fmt.Println(copy)
+        if (a%2==0){
+            fmt.Println(a)
         }
         copy=a+b
         a=b
