@@ -34,11 +34,9 @@ func main(){
             fmt.Printf("Philosopher %d is eating\n",id)
             time.Sleep(time.Second)
             
-            time.Sleep(time.Second)
             fmt.Printf("Philosopher %d finished eating\n",id)
             chopsticks[left].Unlock()
             chopsticks[right].Unlock()
-            
             
         }(i)
     }
